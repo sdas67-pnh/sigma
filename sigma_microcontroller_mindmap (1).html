@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigma Srikanta's Microcontroller Notes</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            margin: 0 auto 20px;
+            display: block;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            object-fit: cover;
+        }
+
+        .profile-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            font-size: 3em;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 10px #fff; }
+            to { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 20px #fff, 0 0 30px #fff; }
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .controls button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 0 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .controls button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .mindmap-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 30px;
+            flex-wrap: wrap;
+            min-height: 800px;
+            position: relative;
+        }
+
+        .node {
+            background: #fff;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            position: relative;
+            max-width: 350px;
+        }
+
+        .node:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .node-header {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .main-node {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef) !important;
+            font-size: 2em !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .controller-8051 {
+            background: linear-gradient(45deg, #a8edea, #fed6e3) !important;
+            border-color: #4ecdc4;
+        }
+
+        .controller-8085 {
+            background: linear-gradient(45deg, #ffecd2, #fcb69f) !important;
+            border-color: #ff6b6b;
+        }
+
+        .controller-8086 {
+            background: linear-gradient(45deg, #e0c3fc, #9bb5ff) !important;
+            border-color: #667eea;
+        }
+
+        .node-content {
+            padding: 10px 0;
+        }
+
+        .sub-node {
+            background: rgba(255,255,255,0.8);
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .sub-node:hover {
+            background: rgba(255,255,255,1);
+            transform: translateX(10px);
+        }
+
+        .sub-node.arch { border-color: #e74c3c; }
+        .sub-node.memory { border-color: #3498db; }
+        .sub-node.interrupt { border-color: #f39c12; }
+        .sub-node.timer { border-color: #27ae60; }
+        .sub-node.serial { border-color: #9b59b6; }
+        .sub-node.flag { border-color: #e67e22; }
+        .sub-node.dma { border-color: #1abc9c; }
+        .sub-node.register { border-color: #34495e; }
+        .sub-node.instruction { border-color: #8e44ad; }
+        .sub-node.bus { border-color: #c0392b; }
+
+        .sub-node-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .sub-node-item {
+            margin: 5px 0;
+            padding: 5px 10px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .toggle-icon {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        .node.collapsed .node-content {
+            display: none;
+        }
+
+        .node.collapsed .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .info-section {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .hashtag {
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .mindmap-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .node {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Replaced data URI with local image -->
+            <img src="batman.jpg" alt="Sigma Srikanta" class="profile-img">
+            <h1>🎯 Sigma Srikanta Notes 🎯</h1>
+            <p><span class="hashtag">#OPENTOWORK</span> Microcontroller Madness - The Ultimate Skibbidi Baller Guide! 🔥💯</p>
+        </div>
+        <!-- ... (rest of the code remains the same) ... -->
+    </div>
+
+        <div class="controls">
+            <button id="expand-all">🚀 Expand All Rizz</button>
+            <button id="collapse-all">📱 Collapse All Vibes</button>
+            <button id="reset">🔄 Reset The Matrix</button>
+        </div>
+
+        <div class="mindmap-container" id="mindmap-root">
+            <!-- Main Central Node -->
+            <div class="node main-controller">
+                <div class="node-header main-node">
+                    🧠 MICROCONTROLLER UNIVERSE 🧠
+                    <span class="toggle-icon">🎯</span>
+                </div>
+                <div class="node-content">
+                    <div class="sub-node">
+                        <div class="sub-node-title">The Holy Trinity of Processors 🛐</div>
+                        <div class="sub-node-item">8051 - The OG Legend ⚡</div>
+                        <div class="sub-node-item">8085 - The Classic Beast 🦁</div>
+                        <div class="sub-node-item">8086 - The 16-bit Chad 💪</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8051 Node -->
+            <div class="node controller-8051">
+                <div class="node-header">
+                    💎 8051 - The Sigma Original 💎
+                    <span class="toggle-icon">⬇️</span>
+                </div>
+                <div class="node-content">
+                    <div class="sub-node arch">
+                        <div class="sub-node-title">🏗️ Architecture (No Cap)</div>
+                        <div class="sub-node-item">8-bit CPU - Built Different 😤</div>
+                        <div class="sub-node-item">Harvard Architecture - Double Vision Mode 👁️</div>
+                        <div class="sub-node-item">CISC Design - Complex but Fire 🔥</div>
+                        <div class="sub-node-item">Single-Chip Solution - All-in-One Vibe ✨</div>
+                        <div class="sub-node-item">40-pin DIP Package - Classic Drip 💧</div>
+                    </div>
+                    
+                    <div class="sub-node memory">
+                        <div class="sub-node-title">🧠 Memory Layout (Brain Cells)</div>
+                        <div class="sub-node-item">4KB ROM - Code Storage Palace 🏰</div>
+                        <div class="sub-node-item">128B Internal RAM - Quick Access Zone ⚡</div>
+                        <div class="sub-node-item">64KB External Memory - Expansion Pack 📦</div>
+                        <div class="sub-node-item">Bit-Addressable RAM - Precision Mode 🎯</div>
+                        <div class="sub-node-item">SFR (20H-2FH) - Special Function Rizz 🌟</div>
+                    </div>
+
+                    <div class="sub-node interrupt">
+                        <div class="sub-node-title">⚡ Interrupts (Alert System)</div>
+                        <div class="sub-node-item">5 Interrupt Sources - Always Ready 🚨</div>
+                        <div class="sub-node-item">INT0, INT1 - External Validation ✅</div>
+                        <div class="sub-node-item">Timer 0/1 Interrupts - Time Management 🕐</div>
+                        <div class="sub-node-item">Serial Port Interrupt - Chat Mode 💬</div>
+                        <div class="sub-node-item">Priority Levels - VIP Treatment 👑</div>
+                    </div>
+
+                    <div class="sub-node timer">
+                        <div class="sub-node-title">⏰ Timers (Time Lords)</div>
+                        <div class="sub-node-item">Timer 0 & 1 - Twin Power 👯</div>
+                        <div class="sub-node-item">16-bit Timers - Big Time Energy 💪</div>
+                        <div class="sub-node-item">4 Operating Modes - Flex Mode On 🤸</div>
+                        <div class="sub-node-item">TMOD Register - Mode Controller 🎮</div>
+                        <div class="sub-node-item">Gate Control - Security Check 🛡️</div>
+                    </div>
+
+                    <div class="sub-node instruction">
+                        <div class="sub-node-title">🛠️ Instruction Set (Command Center)</div>
+                        <div class="sub-node-item">111 Instructions Total - Complete Arsenal 🎯</div>
+                        <div class="sub-node-item">MOV - Data Transfer King 👑</div>
+                        <div class="sub-node-item">ADD, ADDC - Arithmetic Legends ➕</div>
+                        <div class="sub-node-item">SUBB - Subtraction Master ➖</div>
+                        <div class="sub-node-item">MUL, DIV - Math Wizards 🧙‍♂️</div>
+                        <div class="sub-node-item">INC, DEC - Counter Squad 🔢</div>
+                        <div class="sub-node-item">ANL, ORL, XRL - Logic Gang 🧠</div>
+                        <div class="sub-node-item">CLR, SETB - Bit Manipulators 🎛️</div>
+                        <div class="sub-node-item">JMP, CALL, RET - Flow Control 🌊</div>
+                        <div class="sub-node-item">JZ, JNZ, JC, JNC - Conditional Jumps 🦘</div>
+                        <div class="sub-node-item">PUSH, POP - Stack Operations 📚</div>
+                        <div class="sub-node-item">NOP - The Chill Instruction 😴</div>
+                        <div class="sub-node-item">DJNZ - Decrement & Jump Combo 🔄</div>
+                        <div class="sub-node-item">CJNE - Compare & Jump Master 🔍</div>
+                        <div class="sub-node-item">XCH, XCHD - Exchange Champions 🔄</div>
+                        <div class="sub-node-item">RL, RR, RLC, RRC - Rotate Squad 🌀</div>
+                        <div class="sub-node-item">SWAP - Nibble Flipper 🔄</div>
+                        <div class="sub-node-item">DA A - Decimal Adjust Pro 🔢</div>
+                        <div class="sub-node-item">CPL - Complement Converter 🔄</div>
+                        <div class="sub-node-item">MOVX - External Memory Mover 📦</div>
+                        <div class="sub-node-item">MOVC - Code Memory Reader 📖</div>
+                    </div>
+
+                    <div class="sub-node serial">
+                        <div class="sub-node-title">📡 Serial Communication (Chat Master)</div>
+                        <div class="sub-node-item">UART Protocol - Universal Chat Standard 🌐</div>
+                        <div class="sub-node-item">Full Duplex - Talk & Listen Simultaneously 🗣️👂</div>
+                        <div class="sub-node-item">4 Baud Rate Options - Speed Flexibility 🏃</div>
+                        <div class="sub-node-item">SBUF Register - Message Buffer Central 📨</div>
+                        <div class="sub-node-item">SCON Register - Serial Control Hub 🎮</div>
+                        <div class="sub-node-item">TI/RI Flags - Transmit/Receive Status 🚦</div>
+                        <div class="sub-node-item">9-bit Mode Support - Extended Data 📊</div>
+                        <div class="sub-node-item">Multiprocessor Communication 🖥️🖥️</div>
+                    </div>
+
+                    <div class="sub-node">
+                        <div class="sub-node-title">🔌 I/O Ports (Connection Central)</div>
+                        <div class="sub-node-item">Port 0 (P0) - 8-bit Quasi-bidirectional 🚪</div>
+                        <div class="sub-node-item">Port 1 (P1) - 8-bit Quasi-bidirectional 🚪</div>
+                        <div class="sub-node-item">Port 2 (P2) - 8-bit Quasi-bidirectional 🚪</div>
+                        <div class="sub-node-item">Port 3 (P3) - 8-bit Multi-function 🔧</div>
+                        <div class="sub-node-item">32 I/O Lines Total - Max Connectivity 🌐</div>
+                        <div class="sub-node-item">TTL Compatible - Universal Logic 🔌</div>
+                        <div class="sub-node-item">Sink/Source Current Capability 🔋</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8085 Node -->
+            <div class="node controller-8085">
+                <div class="node-header">
+                    🦁 8085 - The Classic Alpha 🦁
+                    <span class="toggle-icon">⬇️</span>
+                </div>
+                <div class="node-content">
+                    <div class="sub-node arch">
+                        <div class="sub-node-title">🏛️ Architecture Supremacy</div>
+                        <div class="sub-node-item">8-bit Microprocessor - OG Status 👴</div>
+                        <div class="sub-node-item">Von Neumann Arch - Classic Flow 🌊</div>
+                        <div class="sub-node-item">3.072 MHz Clock - Vintage Speed 🕰️</div>
+                        <div class="sub-node-item">16-bit Address Bus - Big Memory Dreams 🏠</div>
+                        <div class="sub-node-item">8-bit Data Bus - Info Highway 🛣️</div>
+                    </div>
+
+                    <div class="sub-node register">
+                        <div class="sub-node-title">📚 Registers (The Squad)</div>
+                        <div class="sub-node-item">Accumulator (A) - Main Character 🌟</div>
+                        <div class="sub-node-item">B, C, D, E, H, L - Supporting Cast 👥</div>
+                        <div class="sub-node-item">Stack Pointer (SP) - Stack Manager 📚</div>
+                        <div class="sub-node-item">Program Counter (PC) - GPS System 🧭</div>
+                        <div class="sub-node-item">6 General Purpose - Workhorses 🐎</div>
+                    </div>
+
+                    <div class="sub-node flag">
+                        <div class="sub-node-title">🚩 Flags (Status Indicators)</div>
+                        <div class="sub-node-item">Sign Flag (S) - Positive/Negative Vibes ➕➖</div>
+                        <div class="sub-node-item">Zero Flag (Z) - Nothing to See Here 🫥</div>
+                        <div class="sub-node-item">Carry Flag (CY) - Overflow Alert 🚨</div>
+                        <div class="sub-node-item">Parity Flag (P) - Even/Odd Check ⚖️</div>
+                        <div class="sub-node-item">Auxiliary Carry (AC) - Helper Flag 🤝</div>
+                    </div>
+
+                    <div class="sub-node interrupt">
+                        <div class="sub-node-title">⚡ Interrupt Madness</div>
+                        <div class="sub-node-item">TRAP - Non-Maskable Boss 👑</div>
+                        <div class="sub-node-item">RST 7.5, 6.5, 5.5 - Reset Squad 🔄</div>
+                        <div class="sub-node-item">INTR - Maskable Signal 🎭</div>
+                        <div class="sub-node-item">Vector Interrupts - Direct Routes 🎯</div>
+                    </div>
+
+                    <div class="sub-node instruction">
+                        <div class="sub-node-title">🚀 Instruction Categories (Command Arsenal)</div>
+                        <div class="sub-node-item">Data Transfer: MOV, MOVX, MOVC, PUSH, POP 📦</div>
+                        <div class="sub-node-item">Arithmetic: ADD, SUB, MUL, DIV, INC, DEC ➕➖</div>
+                        <div class="sub-node-item">Logical: ANL, ORL, XRL, CLR, SETB, CPL 🧠</div>
+                        <div class="sub-node-item">Control Transfer: JMP, CALL, RET, JZ, JNZ 🌊</div>
+                        <div class="sub-node-item">Machine Control: NOP, HLT, EI, DI ⚙️</div>
+                        <div class="sub-node-item">74 Instructions Total - Complete Toolkit 🛠️</div>
+                        <div class="sub-node-item">1-3 Byte Instructions - Compact Code 📏</div>
+                        <div class="sub-node-item">Addressing Modes: 5 Different Types 🎯</div>
+                        <div class="sub-node-item">Instruction Cycle: 4-18 Clock Cycles ⏱️</div>
+                        <div class="sub-node-item">Opcode Format: 8-bit Operation Codes 🔢</div>
+                        <div class="sub-node-item">Flag Manipulation: CMA, CMC, STC 🚩</div>
+                        <div class="sub-node-item">Rotate Instructions: RAL, RAR, RLC, RRC 🌀</div>
+                        <div class="sub-node-item">Stack Operations: PUSH PSW, POP PSW 📚</div>
+                        <div class="sub-node-item">I/O Instructions: IN, OUT Port Access 🚪</div>
+                        <div class="sub-node-item">Jump Conditions: JC, JNC, JP, JM, JPE, JPO 🦘</div>
+                    </div>
+
+                    <div class="sub-node">
+                        <div class="sub-node-title">🔄 DMA (Direct Memory Access)</div>
+                        <div class="sub-node-item">HOLD - Hand Over Control Signal 🤲</div>
+                        <div class="sub-node-item">HLDA - Hold Acknowledgment Response ✅</div>
+                        <div class="sub-node-item">High-Speed Data Transfers 💨</div>
+                        <div class="sub-node-item">CPU-Independent Operation 🤖</div>
+                        <div class="sub-node-item">Memory-to-Memory Transfer 📦📦</div>
+                        <div class="sub-node-item">I/O-to-Memory Transfer 🚪📦</div>
+                        <div class="sub-node-item">8237 DMA Controller Support 🎛️</div>
+                    </div>
+
+                    <div class="sub-node">
+                        <div class="sub-node-title">🏗️ Pin Configuration (Connection Map)</div>
+                        <div class="sub-node-item">40-pin DIP Package - Classic Form 📦</div>
+                        <div class="sub-node-item">AD0-AD7 - Multiplexed Address/Data 🔄</div>
+                        <div class="sub-node-item">A8-A15 - High Address Lines 🎯</div>
+                        <div class="sub-node-item">ALE - Address Latch Enable ⚡</div>
+                        <div class="sub-node-item">RD, WR - Read/Write Control 📖✍️</div>
+                        <div class="sub-node-item">IO/M - I/O or Memory Select 🔀</div>
+                        <div class="sub-node-item">READY - Wait State Control ⏸️</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8086 Node -->
+            <div class="node controller-8086">
+                <div class="node-header">
+                    👑 8086 - The 16-bit King 👑
+                    <span class="toggle-icon">⬇️</span>
+                </div>
+                <div class="node-content">
+                    <div class="sub-node arch">
+                        <div class="sub-node-title">🏆 Architectural Dominance</div>
+                        <div class="sub-node-item">16-bit CPU - Double Power 💪💪</div>
+                        <div class="sub-node-item">Segmented Memory - Modular Madness 🧩</div>
+                        <div class="sub-node-item">Pipelined Architecture - Assembly Line 🏭</div>
+                        <div class="sub-node-item">8087 Math Coprocessor Support 🧮</div>
+                        <div class="sub-node-item">1MB Memory Access - Big League 🌍</div>
+                    </div>
+
+                    <div class="sub-node register">
+                        <div class="sub-node-title">🎯 Register Arsenal</div>
+                        <div class="sub-node-item">AX, BX, CX, DX - The Core Four 4️⃣</div>
+                        <div class="sub-node-item">SI, DI - Source/Destination Pros 📍</div>
+                        <div class="sub-node-item">SP, BP - Stack Masters 📚</div>
+                        <div class="sub-node-item">CS, DS, ES, SS - Segment Squad 🏘️</div>
+                        <div class="sub-node-item">16-bit Wide - Double Vision 👀</div>
+                    </div>
+
+                    <div class="sub-node instruction">
+                        <div class="sub-node-title">🛠️ Instruction Set Power (Ultimate Command List)</div>
+                        <div class="sub-node-item">200+ Instructions - Mega Flex Library 📚</div>
+                        <div class="sub-node-item">Data Transfer: MOV, PUSH, POP, XCHG, XLAT 📦</div>
+                        <div class="sub-node-item">Arithmetic: ADD, SUB, MUL, DIV, INC, DEC ➕➖</div>
+                        <div class="sub-node-item">Logical: AND, OR, XOR, NOT, TEST, CMP 🧠</div>
+                        <div class="sub-node-item">String Ops: MOVS, CMPS, SCAS, LODS, STOS 🔤</div>
+                        <div class="sub-node-item">Control: JMP, CALL, RET, JZ, JNZ, LOOP 🌊</div>
+                        <div class="sub-node-item">Shift/Rotate: SHL, SHR, ROL, ROR, RCL, RCR 🌀</div>
+                        <div class="sub-node-item">Processor Control: HLT, NOP, WAIT, LOCK ⚙️</div>
+                        <div class="sub-node-item">Flag Manipulation: CLC, STC, CMC, CLD, STD 🚩</div>
+                        <div class="sub-node-item">I/O Operations: IN, OUT, INS, OUTS 🚪</div>
+                        <div class="sub-node-item">Interrupt: INT, INTO, IRET 🚨</div>
+                        <div class="sub-node-item">Segment Override Prefixes 🏷️</div>
+                        <div class="sub-node-item">REP Prefix for String Operations 🔄</div>
+                        <div class="sub-node-item">1-6 Byte Instruction Length 📏</div>
+                        <div class="sub-node-item">Variable Execution Time ⏱️</div>
+                        <div class="sub-node-item">Complex Addressing Calculations 🧮</div>
+                    </div>
+
+                    <div class="sub-node">
+                        <div class="sub-node-title">🎯 Addressing Modes (Access Mastery)</div>
+                        <div class="sub-node-item">Register Mode - Direct Register Access 📋</div>
+                        <div class="sub-node-item">Immediate Mode - #Data Instant ⚡</div>
+                        <div class="sub-node-item">Direct Mode - Memory Address Direct 🏠</div>
+                        <div class="sub-node-item">Register Indirect - [REG] Pointer 👉</div>
+                        <div class="sub-node-item">Based - [BX/BP] + Displacement 📍</div>
+                        <div class="sub-node-item">Indexed - [SI/DI] + Displacement 🗂️</div>
+                        <div class="sub-node-item">Based Indexed - [BX/BP][SI/DI] 🎯</div>
+                        <div class="sub-node-item">String Addressing - Special String Ops 🔤</div>
+                    </div>
+
+                    <div class="sub-node bus">
+                        <div class="sub-node-title">🚌 Bus Interface</div>
+                        <div class="sub-node-item">Multiplexed Bus - Space Saver 💾</div>
+                        <div class="sub-node-item">20 Address Lines - Address King 🏠</div>
+                        <div class="sub-node-item">16-bit Data Bus - Info Superhighway 🛣️</div>
+                        <div class="sub-node-item">Max/Min Mode - Dual Personality 🎭</div>
+                    </div>
+
+                    <div class="sub-node memory">
+                        <div class="sub-node-title">🧠 Memory Management</div>
+                        <div class="sub-node-item">Segmentation - Divide & Conquer 📐</div>
+                        <div class="sub-node-item">Physical Address = Segment×16 + Offset 🧮</div>
+                        <div class="sub-node-item">1MB Addressable Space 🌌</div>
+                        <div class="sub-node-item">64KB Segment Size - Perfect Chunks 🍰</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>🎮 How To Navigate This Sigma Mindmap:</h3>
+            <p>• Click any node to expand/collapse that fire content 🔥</p>
+            <p>• Use buttons for full rizz control over all nodes 💯</p>
+            <p>• Share this absolute unit with your study squad 📚</p>
+            <p>• Remember: Stay sigma, stay learning! 🧠✨</p>
+            <p><strong>Sigma Srikanta is <span class="hashtag">#OPENTOWORK</span> - Hit him up! 📧</strong></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nodes = document.querySelectorAll('.node');
+            const expandAllBtn = document.getElementById('expand-all');
+            const collapseAllBtn = document.getElementById('collapse-all');
+            const resetBtn = document.getElementById('reset');
+
+            // Add click functionality to each node
+            nodes.forEach(node => {
+                const header = node.querySelector('.node-header');
+                header.addEventListener('click', function() {
+                    node.classList.toggle('collapsed');
+                    const icon = node.querySelector('.toggle-icon');
+                    if (node.classList.contains('collapsed')) {
+                        icon.textContent = '➡️';
+                    } else {
+                        icon.textContent = '⬇️';
+                    }
+                });
+            });
+
+            // Expand all nodes
+            expandAllBtn.addEventListener('click', function() {
+                nodes.forEach(node => {
+                    node.classList.remove('collapsed');
+                    const icon = node.querySelector('.toggle-icon');
+                    icon.textContent = '⬇️';
+                });
+            });
+
+            // Collapse all nodes
+            collapseAllBtn.addEventListener('click', function() {
+                nodes.forEach(node => {
+                    if (!node.classList.contains('main-controller')) {
+                        node.classList.add('collapsed');
+                        const icon = node.querySelector('.toggle-icon');
+                        icon.textContent = '➡️';
+                    }
+                });
+            });
+
+            // Reset to default state
+            resetBtn.addEventListener('click', function() {
+                nodes.forEach(node => {
+                    node.classList.remove('collapsed');
+                    const icon = node.querySelector('.toggle-icon');
+                    if (node.classList.contains('main-controller')) {
+                        icon.textContent = '🎯';
+                    } else {
+                        icon.textContent = '⬇️';
+                    }
+                });
+            });
+
+            // Add some sigma console messages
+            console.log("%c🎯 SIGMA SRIKANTA'S MICROCONTROLLER NOTES LOADED! 🎯", 
+                      "color: #4CAF50; font-size: 20px; font-weight: bold; text-shadow: 2px 2px #ff99cc;");
+            console.log("%c#OPENTOWORK - Hire this legend! 💼", 
+                      "color: #2196F3; font-size: 16px; font-weight: bold;");
+            
+            // Add hover effects for extra sigma energy
+            nodes.forEach(node => {
+                node.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                node.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // Auto-collapse non-main nodes initially for better UX
+            setTimeout(() => {
+                nodes.forEach(node => {
+                    if (!node.classList.contains('main-controller')) {
+                        node.classList.add('collapsed');
+                        const icon = node.querySelector('.toggle-icon');
+                        icon.textContent = '➡️';
+                    }
+                });
+            }, 1000);
+        });
+
+        // Add some random sigma quotes to keep the energy up
+        const sigmaQuotes = [
+            "Stay hungry for knowledge! 🧠",
+            "Microcontrollers = Pure Sigma Energy ⚡",
+            "8051, 8085, 8086 - The Holy Trinity! 🛐",
+            "Code like a champion! 👑",
+            "Never stop the grind! 💪"
+        ];
+
+        setInterval(() => {
+            const randomQuote = sigmaQuotes[Math.floor(Math.random() * sigmaQuotes.length)];
+            console.log(`%c${randomQuote}`, "color: #FF6B6B; font-size: 14px; font-weight: bold;");
+        }, 30000);
+    </script>
+</body>
+</html>
